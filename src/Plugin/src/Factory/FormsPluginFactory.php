@@ -21,6 +21,7 @@ class FormsPluginFactory
     {
         return new FormsPlugin(
             $container->get(FormElementManager::class),
+            $container,
             $container->get(FlashMessengerInterface::class)
         );
     }

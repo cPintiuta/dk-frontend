@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Frontend\Contact\Form;
 
+use Frontend\App\Form\Element\EntitySelect;
 use Frontend\Contact\InputFilter\ContactInputFilter;
+use Frontend\User\Entity\UserRole;
 use Laminas\Form\Element\Email;
 use Laminas\Form\Element\Hidden;
 use Laminas\Form\Element\Text;
@@ -25,12 +27,11 @@ class ContactForm extends Form
      * @param null $name
      * @param array $options
      */
-    public function __construct($name = null, array $options = [])
+    public function __construct($name = 'contact_form', array $options = [])
     {
         parent::__construct($name, $options);
 
-        $this->init();
-
+//        $this->init();
         $this->inputFilter = new ContactInputFilter();
         $this->inputFilter->init();
     }
@@ -73,6 +74,19 @@ class ContactForm extends Form
                 'placeholder' => 'Subject...'
             ],
             'type' => Hidden::class,
+        ]);
+
+        $this->add([
+            'name' => 'department',
+            'type' => 'EntitySelect',
+            'options' => [
+                'label' => 'Department',
+                'entity'  => UserRole::class,
+                'key_column'  => 'uuid',
+                'value_column' => 'name',
+                'empty_option' => 'Select one',
+                'value_options' => [],
+            ]
         ]);
 
         $this->add([

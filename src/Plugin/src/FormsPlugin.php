@@ -4,23 +4,61 @@ declare(strict_types=1);
 
 namespace Frontend\Plugin;
 
+use Dot\Controller\Exception\RuntimeException;
 use Dot\FlashMessenger\FlashMessengerInterface;
+use Dot\Form\Factory\FormAbstractServiceFactory;
 use Dot\Form\FormElementManager;
 use Laminas\Form\Form;
 use Laminas\Form\FormInterface;
+use Psr\Container\ContainerInterface;
 
-class FormsPlugin implements PluginInterface
+class FormsPlugin implements \Dot\Controller\Plugin\PluginInterface
 {
     protected FormElementManager $formElementManager;
     protected ?FlashMessengerInterface $flashMessenger;
 
+    protected ContainerInterface $container;
+
     public function __construct(
         FormElementManager $formManager,
+        ContainerInterface $container,
         FlashMessengerInterface $flashMessenger = null
     ) {
         $this->formElementManager = $formManager;
         $this->flashMessenger = $flashMessenger;
+        $this->container = $container;
     }
+
+    public function __invoke(string $name = null)
+    {
+        if (is_null($name)) {
+            return $this;
+        }
+
+        $result = null;
+        // check the container first, in case there is a form to get through the abstract factory
+        $abstractFormName = FormAbstractServiceFactory::PREFIX . '.' . $name;
+        if ($this->container->has($abstractFormName)) {
+            $result = $this->container->get($abstractFormName);
+        } elseif ($this->formElementManager->has($name)) {
+            $result = $this->formElementManager->get($name);
+        }
+
+        if (!$result) {
+            throw new RuntimeException(
+                "Form, fieldset or element with name $result could not be created. ' .
+                'Are you sure you registered it in the form manager?"
+            );
+        }
+
+        if ($result instanceof Form) {
+            $this->restoreState($result);
+        }
+
+        return $result;
+    }
+
+
 
     public function restoreState(Form $form): void
     {

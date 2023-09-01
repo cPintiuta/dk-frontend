@@ -9,12 +9,18 @@ use Doctrine\ORM\EntityManagerInterface;
 use Dot\AnnotatedServices\Factory\AnnotatedServiceFactory;
 use Frontend\App\Controller\LanguageController;
 use Frontend\App\Factory\EntityListenerResolverFactory;
+use Frontend\App\Factory\EntitySelectFactory;
+use Frontend\App\Form\Element\EntitySelect;
 use Frontend\App\Resolver\EntityListenerResolver;
 use Frontend\App\Service\CookieService;
 use Frontend\App\Service\CookieServiceInterface;
 use Frontend\App\Service\RecaptchaService;
 use Frontend\App\Service\TranslateService;
 use Frontend\App\Service\TranslateServiceInterface;
+use Frontend\Contact\Form\ContactForm;
+use Frontend\Plugin\Factory\FormsPluginFactory;
+use Laminas\Form\ElementFactory;
+use Laminas\ServiceManager\Factory\InvokableFactory;
 use Mezzio\Application;
 use Roave\PsrContainerDoctrine\EntityManagerFactory;
 
@@ -38,6 +44,15 @@ class ConfigProvider
             'dependencies' => $this->getDependencies(),
             'doctrine' => $this->getDoctrineConfig(),
             'templates' => $this->getTemplates(),
+            'dot_form' => $this->getForms(),
+            'dot_controller' => [
+                'plugin_manager'  => [
+                    'factories' => [
+                        'forms' => FormsPluginFactory::class
+                    ]
+                ],
+                'event_listeners' => [],
+            ],
         ];
     }
 
@@ -100,4 +115,19 @@ class ConfigProvider
             ],
         ];
     }
+
+    public function getForms(): array
+    {
+        return [
+            'form_manager' => [
+                'factories' => [
+                    EntitySelect::class => EntitySelectFactory::class
+                ],
+                'aliases' => [
+                    'EntitySelect' => EntitySelect::class
+                ],
+            ],
+        ];
+    }
+
 }
