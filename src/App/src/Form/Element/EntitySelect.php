@@ -3,6 +3,7 @@
 namespace Frontend\App\Form\Element;
 
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\Exception\NotSupported;
 use Doctrine\ORM\Mapping\Entity;
 use Frontend\User\Entity\UserRole;
 use Laminas\Form\Element\Select;
@@ -40,10 +41,12 @@ class EntitySelect extends Select
        return $this;
     }
 
+    /**
+     * @throws NotSupported
+     */
     public function getValueOptions(): array
     {
-        $roles = $this->entityManager->getRepository($this->entity)
-            ->findAll();
+        $roles = $this->entityManager->getRepository($this->entity)->findAll();
 
         /** @var UserRole $role */
         foreach ($roles as $role){
@@ -112,9 +115,5 @@ class EntitySelect extends Select
     {
         $this->entityManager = $entityManager;
     }
-
-
-
-
 
 }

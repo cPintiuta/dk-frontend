@@ -7,12 +7,12 @@ namespace Frontend\Plugin;
 use Dot\Controller\Exception\RuntimeException;
 use Dot\FlashMessenger\FlashMessengerInterface;
 use Dot\Form\Factory\FormAbstractServiceFactory;
+use Dot\Controller\Plugin\PluginInterface;
 use Dot\Form\FormElementManager;
 use Laminas\Form\Form;
-use Laminas\Form\FormInterface;
 use Psr\Container\ContainerInterface;
 
-class FormsPlugin implements \Dot\Controller\Plugin\PluginInterface
+class FormsPlugin implements PluginInterface
 {
     protected FormElementManager $formElementManager;
     protected ?FlashMessengerInterface $flashMessenger;
@@ -57,8 +57,6 @@ class FormsPlugin implements \Dot\Controller\Plugin\PluginInterface
 
         return $result;
     }
-
-
 
     public function restoreState(Form $form): void
     {

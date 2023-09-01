@@ -27,11 +27,10 @@ class ContactForm extends Form
      * @param null $name
      * @param array $options
      */
-    public function __construct($name = 'contact_form', array $options = [])
+    public function __construct($name = null, array $options = [])
     {
         parent::__construct($name, $options);
 
-//        $this->init();
         $this->inputFilter = new ContactInputFilter();
         $this->inputFilter->init();
     }
@@ -84,7 +83,7 @@ class ContactForm extends Form
                 'entity'  => UserRole::class,
                 'key_column'  => 'uuid',
                 'value_column' => 'name',
-                'empty_option' => 'Select one',
+                'empty_option' => 'Select department',
                 'value_options' => [],
             ]
         ]);
